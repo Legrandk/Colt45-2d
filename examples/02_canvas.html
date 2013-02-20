@@ -44,22 +44,21 @@ function animate(){
     current_frame_idx = ( current_frame_idx + 1 ) % frames.length;
 };
 
+function onImageLoad() {
+    num_frames_loaded = num_frames_loaded + 1;
+    if( num_frames_loaded == assets.length ) {
+        current_frame_idx = 0;
+        setInterval(animate, 1000/30);
+    }  
+}
+
 function loadImages() {
     var img;
     num_frames_loaded = 0;
-    for( var i=0; i < assets.length; i++ ) {
-        console.log("assets["+i+"]: " + assets[i] );
+    for( var i = 0; i < assets.length; i++ ) {
         img = new Image();
         frames.push(img);
-
-        img.onload = function() {
-            console.log("Image loaded " + this.src );
-            num_frames_loaded = num_frames_loaded + 1;
-            if( num_frames_loaded == assets.length ) {
-                current_frame_idx = 0;
-                setInterval(animate, 1000/30);
-            }
-        }
+        img.onload = onImageLoad;
         img.src = assets[i];
     }    
 }
