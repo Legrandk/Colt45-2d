@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8">
+		<title>Lesson1: Canvas</title>
+
+		<script type="text/javascript" src="../src/core.js"></script>
+		<script type="text/javascript" src="../src/colt45_2d.js"></script>
+
+		<script type="text/javascript">
+			var colt45_2d;
+
+			window.onload = function(){
+				colt45_2d = new Colt45_2d();
+
+				var hero = new Image();
+				hero.onload = function() {
+					colt45_2d.drawSprite( this , colt45_2d.canvas_size.w * 0.10 , colt45_2d.canvas_size.h * 0.10);
+				}
+				hero.src = "http://www.blogcdn.com/blog.moviefone.com/media/2008/04/greatest-american-hero.jpg";
+			}
+		</script>
+	</head>
+
+	<body id="body">
+
+	</body>
+
+</html>
