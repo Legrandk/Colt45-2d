@@ -3,12 +3,13 @@ Colt45_2d = Class.extend({
     canvas  : null,
     context : null,
     
-    // global settings -----------------------------------------------------------
+    // global settings ---------------------------------------------------------
     config : {
-        canvas:{  id: 'game_canvas', w: 800, h: 600 }
+        canvas : { id: 'game_canvas', w: 800, h: 600 },
+        url    : { atlas:'./assets/json/grits_effects.json' }
     },
     
-    // setup ---------------------------------------------------------------------
+    // setup -------------------------------------------------------------------
     init : function() {
         this.canvas  = this.createCanvas();
         this.context = this.canvas.getContext('2d');
@@ -23,16 +24,22 @@ Colt45_2d = Class.extend({
         return canvas;
     },
     
-    // drawing -------------------------------------------------------------------
+    // xhr ---------------------------------------------------------------------
+    loadAtlas : function(){
+        var u = this.getConfig('url.atlas');  
+    },
+    loadSpriteSheet: function(){},
+    
+    // drawing -----------------------------------------------------------------
     drawSprite : function ( image , posX, posY ) {
         this.context.drawImage( image, posX, posY );
     },
     
-    // util ----------------------------------------------------------------------
+    // util --------------------------------------------------------------------
     getConfig: function(n,dflt){
         var res, cmd;
-        try{ cmd = "this.config['"+(n+'').split('.').join("']['")+"']"; res = eval(cmd); }
-        catch(e) { console.log('Exception: getConfig -> '+e.toString()); res = dflt;    }
+        try{ cmd = "this.config['"+(n+'').split('.').join("']['")+"']";  res = eval(cmd); }
+        catch(e) { console.log('Exception: getConfig -> '+e.toString()); res = dflt;      }
         return ((typeof res) =='undefined') ? dflt : res;
     }
 
