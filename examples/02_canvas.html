@@ -38,7 +38,7 @@ function animate(){
     // Draw each frame in order, looping back around to the 
     // beginning of the animation once you reach the end.
     // Draw each frame at a position of (0,0) on the canvas.
-    
+    colt45_2d.clearContext(); 
     colt45_2d.drawSprite( frames[current_frame_idx], 0, 0 );
     current_frame_idx = ( current_frame_idx + 1 ) % frames.length;
 };
@@ -63,7 +63,7 @@ function loadImages() {
 }
 
 window.onload = function(){
-    colt45_2d   = new Colt45_2d( { "size" : { w:100, h:100 } } );
+    colt45_2d   = new Colt45_2d( { "canvas" : { w:100, h:100 } } );
 
     loadImages();
 }
