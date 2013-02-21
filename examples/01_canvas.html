@@ -11,16 +11,16 @@
 <script type="text/javascript">
 var colt45_2d;
 window.onload = function(){
-    colt45_2d   = new Colt45_2d();
-    var hero    = new Image();
-    hero.onload = function() {
+    colt45_2d   = new Colt45_2d( { "size" : { w:500, h:500 } } );
+    var robot    = new Image();
+    robot.onload = function() {
         colt45_2d.drawSprite(
             this,
-            colt45_2d.config.canvas.w * 0.10,
-            colt45_2d.config.canvas.h * 0.10
+            192,
+            192
         );
     }
-    hero.src = "http://www.blogcdn.com/blog.moviefone.com/media/2008/04/greatest-american-hero.jpg";
+    robot.src = "./assets/images/ralphyrobot.png";
 }
 </script>
 

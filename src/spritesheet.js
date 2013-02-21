@@ -1,5 +1,4 @@
-
-
+// Udacity (c) 2013
 // We keep a global dictionary of loaded sprite-sheets,
 // which are each an instance of our SpriteSheetClass
 // below.
