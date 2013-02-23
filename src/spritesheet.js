@@ -45,13 +45,16 @@ SpriteSheetClass = Class.extend({
             var sprite = parsed.frames[key];             
             // Define the center of the sprite as an offset (hence the negative)
             var cx = -sprite.frame.w * 0.5;
-            var cy = -sprite.frame.h * 0.5;        
-            if ( true == sprite.trimmed ) {;
-                cx = -(sprite.sourceSize.w * 0.5 - sprite.spriteSourceSize.x);
-                cy = -(sprite.sourceSize.h * 0.5 - sprite.spriteSourceSize.y);
-            }        
-            // Define the sprite for this sheet by calling
-            // defSprite to store it into the 'sprites' Array.
+            var cy = -sprite.frame.h * 0.5;
+            // if ( sprite.trimmed ) {;
+            //     cx = -(sprite.sourceSize.w * 0.5 - sprite.spriteSourceSize.x);
+            //     cy = -(sprite.sourceSize.h * 0.5 - sprite.spriteSourceSize.y);
+            // }        
+            if ( sprite.trimmed ) {;
+                cx = sprite.spriteSourceSize.x - (sprite.sourceSize.w * 0.5);
+                cy = sprite.spriteSourceSize.y - (sprite.sourceSize.h * 0.5);
+            }
+            // Define sprite for this sheet and store it in sprites array.
             this.defSprite(key, 
                 sprite.frame.x, sprite.frame.y, 
                 sprite.frame.w, sprite.frame.h,
@@ -61,8 +64,7 @@ SpriteSheetClass = Class.extend({
     },
     
     //-----------------------------------------
-    // Walk through all the sprite definitions for this
-    // atlas, and find which one matches the name.
+    // Find a sprite in this atlas by name.
     getStats: function (name) {
         for(var i = 0; i < this.sprites.length; i++) {
             if(this.sprites[i].id === name) { return this.sprites[i]; }
