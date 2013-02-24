@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Lesson 2: Atlas</title>
+        <script type="text/javascript" src="../src/colt45_2d_boot.js"></script>
+        <script type="text/javascript">
+            var colt45_2d, ctx;
+            window.onload = function(){
+                colt45_2d   = new Colt45_2d({canvas: {w: 1024, h: 768}});
+                ctx = colt45_2d.context;
+
+                AnimatedSpriteClass = Class.extend({
+                    sprites:[],
+                    currentFrameIdx: 0,
+                    fps: 1000/30,
+                    cx: 0,
+                    cy: 0,
+                    w: 0,
+                    h: 0,
+                    init: function(sprites){
+                        this.sprites = sprites;
+                        this.setup();
+                    },
+                    setup: function(){
+                        this.cx = this.getMinValue("cx");
+                        this.cy = this.getMinValue("cy");
+                        this.w = this.getMaxValue("w");
+                        this.h = this.getMaxValue("h");
+                    },
+                    drawCurrentFrame: function(x, y){
+                        var sprite = this.sprites[this.currentFrameIdx];
+                        drawSprite(sprite.id, x, y);
+                    },
+                    clearPreviousFrame: function(x, y){
+                        var previousFrameIdx = (
+                            (this.currentFrameIdx>0) ?  
+                            (this.currentFrameIdx-1) : this.sprites.length-1
+                        );
+                        var pSprite = this.sprites[previousFrameIdx];
+                        ctx.clearRect(x + pSprite.cx, y + pSprite.cy, pSprite.w, pSprite.h);
+                    },
+                    nextFrame: function(){
+                        this.currentFrameIdx = (this.currentFrameIdx +1 ) % this.sprites.length;
+                    },
+                    draw: function(x, y){
+                        if (this.sprites.length ===1) {
+                            drawSprite(this.sprites[0].id, x, y);
+                            return;
+                        }
+                        setInterval(
+                            (function(self) {
+                                return function() {
+                                    self.clearPreviousFrame(x,y);
+                                    self.drawCurrentFrame(x,y);
+                                    self.nextFrame();
+                                };
+                            })(this), this.fps);
+                    },
+                    getMaxValue: function(name){
+                        return Math.max.apply(null,this._getArray(name));
+                    },
+                    getMinValue: function(name){
+                        return Math.min.apply(null,this._getArray(name));
+                    },
+                    _getArray: function(name) {
+                        var out = [], nSprites = this.sprites.length;
+                        for(var i=0; i<nSprites; i++){
+                            out.push(this.sprites[i][name]);
+                        }
+                        return out;
+                    }
+                });
+
+                SpriteSheetGroupedClass = SpriteSheetClass.extend({
+                    spritesG: null,
+                    init: function(){
+                        this.parent();
+                    },
+                    // override load adding a callback in onload event.
+                    load: function(imageURL, callback) {
+                        if (typeof callback === "function"){
+                            var img = new Image();
+                            img.onload = function() {
+                                callback();
+                            };
+                            img.src = imageURL;
+                        }
+                        this.parent(imageURL);
+                    },
+                    loadJSON: function(jsonURL, callback) {
+                        var self = this, xhr = new XMLHttpRequest();
+                        xhr.open("GET", jsonURL, true);
+                        xhr.onload = function() {
+                            var json = this.responseText;
+                            self.parseAtlasDefinition(json);
+                            self.initSpritesGrouped();
+                            if (typeof callback === "function"){
+                                callback();
+                            }
+                        };
+                        xhr.send();
+                    },
+                    loadAll: function(imageURL,jsonURL, callback) {
+                        var self = this;
+                        this.load(imageURL, function() {
+                            self.loadJSON(jsonURL, function() {
+                                if (typeof callback === "function"){
+                                    callback();
+                                }
+                            });
+                        });
+                    },
+                    initSpritesGrouped: function () {
+                        var sprite, spriteGName, nSprites=this.sprites.length; 
+                        this.spritesG = {};
+                        for(var i=0; i<nSprites; i++) { 
+                            sprite = this.sprites[i];
+                            spriteGName = sprite.id.replace(/[^a-zA-Z]/g , "");
+                            if (!this.spritesG.hasOwnProperty(spriteGName)){
+                                this.spritesG[spriteGName] = [];
+                            }
+                            this.spritesG[spriteGName].push(sprite);
+                        }
+                    },
+                    drawAll: function () {
+                        var spriteG, spriteGName, x=0, y=0, maxSpriteH=0;
+
+                        for (spriteGName in this.spritesG){
+                            if (this.spritesG.hasOwnProperty(spriteGName)){
+                                spriteG = this.spritesG[spriteGName];
+                                var as = new AnimatedSpriteClass(spriteG);
+                                x = x - as.cx; // cx is negative 
+                                // if it's need a new row:
+                                if ((x + as.w) >= colt45_2d.config.canvas.w){
+                                    x=-(as.cx);
+                                    y= y + maxSpriteH;
+                                    maxSpriteH=0;
+                                }
+                                as.draw(x,y - as.cy);
+                                // draw a rectangle to debug limits:
+                                //ctx.rect(x + as.cx, y, as.w, as.h);
+                                //ctx.stroke();
+                                x = (x + as.cx) + as.w;
+                                if (as.h > maxSpriteH) { maxSpriteH = as.h; }
+                            }
+                        }
+                    }
+                });
+
+                var sheet = new SpriteSheetGroupedClass();
+                var imageURL = "./assets/images/grits_effects.png";
+                var jsonURL = "./assets/json/grits_effects.json";
+                sheet.loadAll(imageURL, jsonURL, function() {
+                    sheet.drawAll();
+                });
+            };
+        </script>
+    </head>
+
+    <body id="body"></body>
+
+</html>
