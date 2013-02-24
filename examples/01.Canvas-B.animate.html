@@ -10,7 +10,7 @@
 <script type="text/javascript">
 // load images -----------------------------------------------------------------
 var img,
-    steps  = [], 
+    steps  = [], current_step = 0, 
     where  = './assets/images/robowalk/',
     assets = ['robowalk00.png', 'robowalk01.png', 'robowalk02.png',
               'robowalk03.png', 'robowalk04.png', 'robowalk05.png',
@@ -22,15 +22,15 @@ var img,
 for( var i=0; i<assets.length; i++ ) {
     img      = new Image();
     img.name = assets[i];
-    img.src  = where + assets[i];
+    img.src  = where + img.name;
     steps.push(img);
 }
 console.log("Loaded "+steps.length+" images in "+where+":\n  "+assets.join("\n  "));
 
 // animate when page has loaded ------------------------------------------------
+var colt45_2d;
 window.onload = function(){
-    var current_step = 0, img;
-    var colt45_2d = new Colt45_2d( { "canvas" : { w:100, h:100 } } );
+    colt45_2d = new Colt45_2d( { "canvas" : { w:100, h:100 } } );
     setInterval(function(){
       colt45_2d.clearContext();
       colt45_2d.drawImage( steps[current_step], 0, 0 );
