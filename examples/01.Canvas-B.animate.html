@@ -8,65 +8,37 @@
 <script type="text/javascript" src="../src/colt45_2d_boot.js"></script>
 
 <script type="text/javascript">
-var assets = ['assets/images/robowalk/robowalk00.png',
-              'assets/images/robowalk/robowalk01.png',
-              'assets/images/robowalk/robowalk02.png',
-              'assets/images/robowalk/robowalk03.png',
-              'assets/images/robowalk/robowalk04.png',
-              'assets/images/robowalk/robowalk05.png',
-              'assets/images/robowalk/robowalk06.png',
-              'assets/images/robowalk/robowalk07.png',
-              'assets/images/robowalk/robowalk08.png',
-              'assets/images/robowalk/robowalk09.png',
-              'assets/images/robowalk/robowalk10.png',
-              'assets/images/robowalk/robowalk11.png',
-              'assets/images/robowalk/robowalk12.png',
-              'assets/images/robowalk/robowalk13.png',
-              'assets/images/robowalk/robowalk14.png',
-              'assets/images/robowalk/robowalk15.png',
-              'assets/images/robowalk/robowalk16.png',
-              'assets/images/robowalk/robowalk17.png',
-              'assets/images/robowalk/robowalk18.png'];
-
-var frames = [];
-var current_frame_idx;
-var num_frames_loaded;
-
-var colt45_2d;
-
-function animate(){
-    // Draw each frame in order, looping back around to the 
-    // beginning of the animation once you reach the end.
-    // Draw each frame at a position of (0,0) on the canvas.
-    colt45_2d.clearContext(); 
-    colt45_2d.drawSprite( frames[current_frame_idx], 0, 0 );
-    current_frame_idx = ( current_frame_idx + 1 ) % frames.length;
-};
-
-function onImageLoad() {
-    num_frames_loaded = num_frames_loaded + 1;
-    if( num_frames_loaded == assets.length ) {
-        current_frame_idx = 0;
-        setInterval(animate, 1000/30);
-    }  
+// load images -----------------------------------------------------------------
+var img,
+    steps  = [], 
+    where  = './assets/images/robowalk/',
+    assets = ['robowalk00.png', 'robowalk01.png', 'robowalk02.png',
+              'robowalk03.png', 'robowalk04.png', 'robowalk05.png',
+              'robowalk06.png', 'robowalk07.png', 'robowalk08.png',
+              'robowalk09.png', 'robowalk10.png', 'robowalk11.png',
+              'robowalk12.png', 'robowalk13.png', 'robowalk14.png',
+              'robowalk15.png', 'robowalk16.png', 'robowalk17.png',
+              'robowalk18.png'];
+for( var i=0; i<assets.length; i++ ) {
+    img      = new Image();
+    img.name = assets[i];
+    img.src  = where + assets[i];
+    steps.push(img);
 }
+console.log("Loaded "+steps.length+" images in "+where+":\n  "+assets.join("\n  "));
 
-function loadImages() {
-    var img;
-    num_frames_loaded = 0;
-    for( var i = 0; i < assets.length; i++ ) {
-        img = new Image();
-        frames.push(img);
-        img.onload = onImageLoad;
-        img.src = assets[i];
-    }    
-}
-
+// animate when page has loaded ------------------------------------------------
 window.onload = function(){
-    colt45_2d   = new Colt45_2d( { "canvas" : { w:100, h:100 } } );
-
-    loadImages();
+    var current_step = 0, img;
+    var colt45_2d = new Colt45_2d( { "canvas" : { w:100, h:100 } } );
+    setInterval(function(){
+      colt45_2d.clearContext();
+      colt45_2d.drawImage( steps[current_step], 0, 0 );
+      //console.log("Draw image: " + steps[current_step].name);
+      current_step = ( current_step + 1 ) % steps.length;
+    }, 1000/30);  
 }
+
 </script>
 
 </head>
