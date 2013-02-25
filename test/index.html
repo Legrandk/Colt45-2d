@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>Colt45_2d Mocha Test</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./vendor/mocha/mocha.css" />
+    </head>
+    <body>
+        <div id="mocha"></div>
+        <script src="./vendor/mocha/mocha.js"></script>
+        <script src="./vendor/chai/chai.js"></script>
+        <script>
+            mocha.setup({
+                ui: 'bdd'
+            });
+            var assert = chai.assert;
+            var expect = chai.expect;
+            var should = chai.should;
+        </script>
+
+        <!-- src files -->
+        <script src="../src/core.js"></script>
+        <script src="../src/colt45_2d.js"></script>
+
+        <!-- spec files -->
+
+        <script src="./spec/colt45_2d.spec.js"></script>
+
+        <!-- run mocha -->
+        <script>
+            onload = function(){
+                var runner = mocha.run();
+                runner.globals(['foo', 'bar', 'duh']);
+            };
+        </script>
+
+    </body>
+</html>
