@@ -79,11 +79,13 @@ Colt45_2d = Class.extend({
     },
     
     // util --------------------------------------------------------------------
-    getConfig: function(n,dflt){
-        var res, cmd;
-        try{ cmd = "this.config['"+(n+'').split('.').join("']['")+"']";  res = eval(cmd); }
-        catch(e) { console.log('Exception: getConfig -> '+e.toString()); res = dflt;      }
-        return ((typeof res) =='undefined') ? dflt : res;
+    getConfig: function(n, dflt) {
+        var parts = n.split('.'), res = this.config, i;
+        for (i = 0; i < parts.length; i++) {
+            if (typeof res[parts[i]] !== 'undefined') { res = res[parts[i]]; }
+            else { return dflt; }
+        }
+        return res;
     }
 
 });
