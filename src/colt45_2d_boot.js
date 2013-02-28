@@ -1,6 +1,8 @@
 var required_modules = [
     'core.js',
     'spritesheet.js', //requires core.js
+    'xhr.js',
+    'tiledmap.js', // requires xhr.js
     'colt45_2d.js' //requires core.js and spritesheet.js
 ];
 

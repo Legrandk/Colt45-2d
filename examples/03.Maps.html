@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>Lesson 3: Maps rendering</title>
+        <script type="text/javascript" src="../src/colt45_2d_boot.js"></script>
+        <script type="text/javascript">
+            window.onload = function(){
+                colt45_2d = new Colt45_2d( { "canvas" : { w:6500, h:6500 } } );
+                gMap.load("./assets/json/map.json");
+                var interval = setInterval(function(){
+                    if(gMap.fullyLoaded){
+                        gMap.draw(colt45_2d.context);
+                        clearInterval(interval);
+                    }
+                }, 500); 
+            }
+        </script>
+
+    </head>
+
+    <body id="body"></body>
+
+</html>
