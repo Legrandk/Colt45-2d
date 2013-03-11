@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 2: Atlas - Animate Sprite Groups</title>
+<script type="text/javascript" src="../src/colt45_2d_boot.js"></script>
+<script type="text/javascript">
+
+var colt45_2d,
+    AnimatedSprite,
+    GroupedSpriteSheet;
+    
+window.onload = function(e){
+    AnimatedSprite  = Class.extend({
+        sprites:[],
+        currentFrameIdx: 0,
+        fps: 1000/30,
+        cx: 0,
+        cy: 0,
+        w: 0,
+        h: 0,
+        init: function(sprites){
+            this.sprites = sprites;
+            this.setup();
+        },
+        setup: function(){
+            this.cx = this.getMinValue("cx");
+            this.cy = this.getMinValue("cy");
+            this.w = this.getMaxValue("w");
+            this.h = this.getMaxValue("h");
+        },
+        drawCurrentFrame: function(x, y){
+            colt45_2d.drawSprite(this.sprites[this.currentFrameIdx].id, x, y);
+        },
+        clearPreviousFrame: function(x, y){
+            var previousFrameIdx = (
+                (this.currentFrameIdx>0) ?  
+                (this.currentFrameIdx-1) : this.sprites.length-1
+            );
+            var pSprite = this.sprites[previousFrameIdx];
+            colt45_2d.context.clearRect(x + pSprite.cx, y + pSprite.cy, pSprite.w, pSprite.h);
+        },
+        nextFrame: function(){ this.currentFrameIdx = (this.currentFrameIdx +1 ) % this.sprites.length; },
+        draw: function(x, y){
+            var that = this;
+            if (that.sprites.length ===1) {
+                colt45_2d.drawSprite(that.sprites[0].id, x, y);
+                return;
+            } else{ setInterval(function() {
+                        that.clearPreviousFrame(x,y);
+                        that.drawCurrentFrame(x,y);
+                        that.nextFrame();
+                    },
+                    that.fps
+            ); };
+        },
+        getMaxValue: function(name){ return Math.max.apply(null,this._getArray(name)); },
+        getMinValue: function(name){ return Math.min.apply(null,this._getArray(name)); },
+        _getArray: function(name) {
+            var out = [], nSprites = this.sprites.length;
+            for(var i=0; i<nSprites; i++){
+                out.push(this.sprites[i][name]);
+            }
+            return out;
+        }
+    });
+    
+    GroupedSpriteSheet = SpriteSheetClass.extend({
+        spritesG: null,
+        init: function(spritesheet_url){
+            var sheet       = colt45_2d.getSpriteSheet(imgUrl);
+            this.sprites    = sheet.sprites;
+            this.img        = sheet.img;
+            this.url        = sheet.url;
+            this.initSpritesGrouped();
+        },
+        initSpritesGrouped: function () {
+            var sprite, spriteGName, nSprites=this.sprites.length; 
+            this.spritesG = {};
+            for(var i=0; i<nSprites; i++) { 
+                sprite = this.sprites[i];
+                spriteGName = sprite.id.replace(/[^a-zA-Z]/g , "");
+                if (!this.spritesG.hasOwnProperty(spriteGName)){
+                    this.spritesG[spriteGName] = [];
+                }
+                this.spritesG[spriteGName].push(sprite);
+            }
+        },
+        drawAll: function () {
+            var spriteG, spriteGName,
+                x=0, y=0, maxSpriteH=0,
+                cwidth = colt45_2d.getConfig('canvas.w');
+            for (spriteGName in this.spritesG){
+                if (this.spritesG.hasOwnProperty(spriteGName)){
+                    spriteG = this.spritesG[spriteGName];
+                    var as = new AnimatedSprite(spriteG);
+                    x = x - as.cx; // cx is negative 
+                    // if it's need a new row:
+                    if ((x + as.w) >= cwidth){
+                        x=-(as.cx);
+                        y= y + maxSpriteH;
+                        maxSpriteH=0;
+                    }
+                    as.draw(x,y - as.cy);
+                    // draw a rectangle to debug limits:
+                    //ctx.rect(x + as.cx, y, as.w, as.h);
+                    //ctx.stroke();
+                    x = (x + as.cx) + as.w;
+                    if (as.h > maxSpriteH) { maxSpriteH = as.h; }
+                }
+            }
+        }
+    });
+    
+    var imgUrl  = "./assets/images/grits_effects.png";
+    var jsUrl   = "./assets/json/grits_effects.json";
+    colt45_2d   = new Colt45_2d({canvas: {w: 1024, h: 768}});
+    colt45_2d.loadSpriteSheet( imgUrl, jsUrl, function(obj) {
+        var gsheet  = new GroupedSpriteSheet(imgUrl);
+        gsheet.drawAll();
+    });
+};
+</script>
+</head>
+
+<body id="body"></body>
+
+</html>

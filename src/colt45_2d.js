@@ -8,7 +8,9 @@ Colt45_2d = Class.extend({
     // global settings ---------------------------------------------------------
     config : {
         canvas : { id: 'game_canvas', w: 800, h: 600 },
-        url    : { atlas:'./assets/json/grits_effects.json' }
+        sheets : { 
+            './assets/images/grits_effects.png':'./assets/json/grits_effects.json'
+        }
     },
     
     // setup ---------------------------------------------------------------------
@@ -31,16 +33,6 @@ Colt45_2d = Class.extend({
     },
     
     // xhr ---------------------------------------------------------------------
-    //loadAtlas : function(){ var u = this.getConfig('url.atlas'); },
-    
-    loadSpriteSheet:    function(jsonURL){
-        this.loadJSON(jsonURL, loadSpriteSheetCB);
-    },
-    loadSpriteSheetCB:  function(){
-        var json = this.responseText;
-        //self.parseAtlasDefinition(json);
-    },
-    
     xhrGet: function(jsonURL, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", jsonURL, true);
@@ -49,30 +41,53 @@ Colt45_2d = Class.extend({
         xhr.send();
     },
     
-    // drawing -----------------------------------------------------------------
-    drawImage : function ( image , posX, posY ) {
-        this.context.drawImage( image, posX, posY );
+    // spritesheets ------------------------------------------------------------
+    loadSpriteSheet : function(imageURL, jsonURL, callback){    
+        var img     = new Image();
+        var that    = this;
+        img.src     = imageURL;
+        img.onload  = function(){
+            that.xhrGet(jsonURL, function(obj){
+                var sheet       = new SpriteSheetClass();
+                    sheet.url   = imageURL;            // Store the URL of the spritesheet we want.
+                    sheet.img   = img;                 // Store the Image object in the img parameter.
+                sheet.parseAtlasDefinition(this.responseText);
+                that.sheets[imageURL] = sheet;
+                if(callback) { try { callback(obj); } catch(e){}; }
+            });
+
+        }
+    },
+    getSpriteSheet: function(imgUrl){
+        if(this.sheets[''+imgUrl]) { return this.sheets[''+imgUrl]; }
+        else { throw "Unknown SpriteSheet: " + imgUrl; }
     },
     
-/*
-    function drawSprite(spritename, posX, posY) {
-        for(var sheetName in gSpriteSheets) {
-            var sheet   = gSpriteSheets[sheetName];
+    // sprites -----------------------------------------------------------------
+    getSprite: function(spritename){
+        for(var sheetName in this.sheets) {
+            var sheet   = this.sheets[sheetName];
             var sprite  = sheet.getStats(spritename);           // see if a sprite exists
-            if(sprite === null) { continue; }                   // if not, try next sheet
-            __drawSpriteInternal(sprite, sheet, posX, posY);    // if so, draw it
-            return;
+            if(sprite === null) { continue; }
+            sprite.sheet_name = sheetName;
+            return sprite; 
         }
-    }
-    
+        throw "Unknown sprite: " + spritename;
+    },
+    drawSprite : function(spritename, posX, posY) {
+        var sprite = this.getSprite(spritename),
+            sheet  = this.getSpriteSheet(sprite.sheet_name);
+        this.__drawSpriteInternal(sprite, sheet, posX, posY);    // if so, draw it
+    },
     // Draw sprites giving sprite object SpriteSheet instance, and canvas xy position.
-    function __drawSpriteInternal(spt, sheet, posX, posY) {
+    __drawSpriteInternal:function(spt, sheet, posX, posY) {
         if (spt === null || sheet === null) { return; }
         var hlf = { x: spt.cx, y: spt.cy };
-        ctx.drawImage(sheet.img, spt.x, spt.y, spt.w, spt.h, posX + hlf.x, posY + hlf.y, spt.w, spt.h);
-    }
-*/
-
+        this.context.drawImage(sheet.img, spt.x, spt.y, spt.w, spt.h, posX + hlf.x, posY + hlf.y, spt.w, spt.h);
+    },
+    
+    // drawing -----------------------------------------------------------------
+    drawImage : function ( image , posX, posY ) { this.context.drawImage( image, posX, posY ); },
     clearContext: function(){
         var w = this.getConfig('canvas.w'),
             h = this.getConfig('canvas.h');
@@ -88,5 +103,6 @@ Colt45_2d = Class.extend({
         }
         return res;
     }
+  
 
 });

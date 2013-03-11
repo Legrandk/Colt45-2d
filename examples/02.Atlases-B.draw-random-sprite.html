@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lesson 2: Atlas - Load Spritesheet</title>
+<script type="text/javascript" src="../src/colt45_2d_boot.js"></script>
+<script type="text/javascript">
+
+function randomSpriteName(sheet){
+    var rand = Math.floor(Math.random()*sheet.sprites.length),
+        name = sheet.sprites[rand].id;
+    console.log("Random sprite name: " + name);
+    return name;
+}
+
+var colt45_2d;
+window.onload = function(){
+
+    colt45_2d = new Colt45_2d({canvas: {w: 1024, h: 768}});
+        
+    var imgUrl  = "./assets/images/grits_effects.png",
+        jsUrl   = "./assets/json/grits_effects.json";
+    
+    colt45_2d.loadSpriteSheet( imgUrl, jsUrl, function(obj) {
+        
+        var sheet = colt45_2d.getSpriteSheet(imgUrl); 
+        console.log("SpriteSheet loaded successfully: "+sheet.img.src);
+        console.log("SpriteSheet contains "+sheet.sprites.length+" sprites!");
+
+        console.log("Draw a random sprite from this SpriteSheet...");
+        colt45_2d.drawSprite(randomSpriteName(sheet), 100, 100);
+        console.log("Done!");
+    });
+};
+
+</script>
+</head>
+
+<body id="body"></body>
+
+</html>

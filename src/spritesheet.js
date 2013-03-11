@@ -74,6 +74,7 @@ SpriteSheetClass = Class.extend({
 
 });
 
+/*
 //-----------------------------------------
 // Draw sprites by sprite name (ie. "chaingun.png") giving canvas xy positions.
 function drawSprite(spritename, posX, posY) {
@@ -94,3 +95,4 @@ function __drawSpriteInternal(spt, sheet, posX, posY) {
     ctx.drawImage(sheet.img, spt.x, spt.y, spt.w, spt.h, posX + hlf.x, posY + hlf.y, spt.w, spt.h);
 }
 
+*/
