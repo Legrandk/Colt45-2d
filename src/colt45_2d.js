@@ -41,11 +41,11 @@ Colt45_2d = Class.extend({
         //self.parseAtlasDefinition(json);
     },
     
-    xhr: function(jsonURL, callback) {
+    xhrGet: function(jsonURL, callback) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", jsonURL, true);
-        //xhr.onload = callback;
-        xhr.onload = function() { callback(xhr);}    
+        xhr.onload = callback;
+        //xhr.onload = function() { callback(xhr);}    
         xhr.send();
     },
     

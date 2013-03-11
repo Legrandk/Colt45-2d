@@ -89,27 +89,9 @@
                         }
                         this.parent(imageURL);
                     },
-                    loadJSON: function(jsonURL, callback) {
-                        var self = this, xhr = new XMLHttpRequest();
-                        xhr.open("GET", jsonURL, true);
-                        xhr.onload = function() {
-                            var json = this.responseText;
-                            self.parseAtlasDefinition(json);
-                            self.initSpritesGrouped();
-                            if (typeof callback === "function"){
-                                callback();
-                            }
-                        };
-                        xhr.send();
-                    },
-                    loadAll: function(imageURL,jsonURL, callback) {
-                        var self = this;
+                    loadAll:function(imageURL,jsonURL, callback) {
                         this.load(imageURL, function() {
-                            self.loadJSON(jsonURL, function() {
-                                if (typeof callback === "function"){
-                                    callback();
-                                }
-                            });
+                            colt45_2d.xhrGet(jsonURL, callback);
                         });
                     },
                     initSpritesGrouped: function () {
@@ -150,11 +132,17 @@
                 });
 
                 var sheet = new SpriteSheetGroupedClass();
-                var imageURL = "./assets/images/grits_effects.png";
-                var jsonURL = "./assets/json/grits_effects.json";
-                sheet.loadAll(imageURL, jsonURL, function() {
-                    sheet.drawAll();
-                });
+                sheet.loadAll(
+                    "./assets/images/grits_effects.png",
+                    "./assets/json/grits_effects.json",
+                    function(obj) {
+                        console.log('obj: '+obj)
+                        var json = this.responseText;
+                        sheet.parseAtlasDefinition(json);
+                        sheet.initSpritesGrouped();
+                        sheet.drawAll();
+                    }
+                );
             };
         </script>
     </head>
