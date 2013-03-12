@@ -18,6 +18,8 @@ Colt45_2d = Class.extend({
         this.config  = this.loadConfig(params);
         this.canvas  = this.createCanvas();        
         this.context = this.canvas.getContext('2d');
+        //this.map     = new TILEDMapClass();                 // wouldn't this be nice?
+        this.map     = (gMap) ? gMap : new TILEDMapClass();   // pending refactor of the tiledmap class
     },
     loadConfig: function(params){
         if(params!=null&&(typeof params)!='object') throw "Expected a parameters object";
@@ -39,6 +41,19 @@ Colt45_2d = Class.extend({
         xhr.onload = callback;
         //xhr.onload = function() { callback(xhr);}    
         xhr.send();
+    },
+    
+    // maps --------------------------------------------------------------------
+    loadMap: function(url, callback){
+        var that = this;
+        that.map.load(url);
+        var interval = setInterval(function(){
+            if(that.map.fullyLoaded){
+                that.map.draw(that.context);
+                clearInterval(interval);
+                try{ callback(that.map); } catch(e){ /*oh, well*/ }
+            }
+        }, 500);
     },
     
     // spritesheets ------------------------------------------------------------
