@@ -1,4 +1,4 @@
-
+// Colt45_2d has deprecated this file! See lib/TiledMap.js
 
 var TILEDMapClass = Class.extend({
     // This is where we store the full parsed

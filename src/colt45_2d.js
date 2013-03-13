@@ -6,8 +6,9 @@ var script_name = 'colt45_2d.js',
     required_modules = [
       './lib/udacity/core.js',
       './lib/udacity/spritesheet.js', //requires core.js
-      './lib/udacity/xhr.js',
-      './lib/udacity/tiledmap.js',    // requires xhr.js
+//      './lib/udacity/xhr.js',
+//      './lib/udacity/tiledmap.js',    // requires xhr.js
+      './lib/TiledMap.js', 
       './lib/Colt45_2d.js'            //requires core.js and spritesheet.js
     ];
 

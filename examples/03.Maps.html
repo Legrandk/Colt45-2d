@@ -11,8 +11,8 @@
 
 window.onload = function(){
     colt45_2d = new Colt45_2d( { "canvas" : { w:6500, h:6500 } } );
-    colt45_2d.loadMap("./assets/json/map.json", function(map){
-        console.log('loadMap callback: Map has loaded: ' + map);
+    colt45_2d.loadMap("./assets/json/map.json", function(){
+        console.log('Good food: map done loading!');
     });
 }
 

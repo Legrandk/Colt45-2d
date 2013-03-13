@@ -1,8 +1,8 @@
-Colt45_2d = Class.extend({
+var Colt45_2d = Class.extend({
 
     canvas  : null,
     context : null,
-    
+    map     : null,
     sheets:     {},
     
     // global settings ---------------------------------------------------------
@@ -18,8 +18,7 @@ Colt45_2d = Class.extend({
         this.config  = this.loadConfig(params);
         this.canvas  = this.createCanvas();        
         this.context = this.canvas.getContext('2d');
-        //this.map     = new TILEDMapClass();                 // wouldn't this be nice?
-        this.map     = (gMap) ? gMap : new TILEDMapClass();   // pending refactor of the tiledmap class
+        this.map     = new TiledMap();  
     },
     loadConfig: function(params){
         if(params!=null&&(typeof params)!='object') throw "Expected a parameters object";
@@ -46,14 +45,20 @@ Colt45_2d = Class.extend({
     // maps --------------------------------------------------------------------
     loadMap: function(url, callback){
         var that = this;
-        that.map.load(url);
-        var interval = setInterval(function(){
-            if(that.map.fullyLoaded){
-                that.map.draw(that.context);
-                clearInterval(interval);
-                try{ callback(that.map); } catch(e){ /*oh, well*/ }
-            }
-        }, 500);
+        console.log("load map: " + url);
+        that.xhrGet(url, function () {
+            var data = this;
+            console.log("map loaded: " + data);
+            that.map.parseMapJSON(data.responseText);
+            var interval = setInterval(function(){
+                if(that.map.fullyLoaded){
+                    console.log("map fully loaded")
+                    that.map.draw(that.context);
+                    clearInterval(interval);
+                    try{ callback(that.map); } catch(e){  }
+                }
+            }, 500);
+        });
     },
     
     // spritesheets ------------------------------------------------------------
