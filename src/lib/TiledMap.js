@@ -20,33 +20,31 @@ var TiledMap = Class.extend({
     parseMapJSON: function (mapJSON) {
         var that = this;
         that.currMapData    = JSON.parse(mapJSON);
-        var map             = that.currMapData;
+        var mdata             = that.currMapData;
         // map certain properties to top level, for some reason...
-        that.numXTiles      = map.width;
-        that.numYTiles      = map.height;
-        that.tileSize.x     = map.tilewidth;
-        that.tileSize.y     = map.tileheight;
+        that.numXTiles      = mdata.width;
+        that.numYTiles      = mdata.height;
+        that.tileSize.x     = mdata.tilewidth;
+        that.tileSize.y     = mdata.tileheight;
         that.pixelSize.x    = that.numXTiles * that.tileSize.x;
         that.pixelSize.y    = that.numYTiles * that.tileSize.y;
-        for(var i = 0; i < map.tilesets.length; i++) { // Load each tileset as an Image
-            var img = new Image();
+        for(var i = 0; i < mdata.tilesets.length; i++) { // Load each tileset as an Image
+            var tsdata = mdata.tilesets[i],
+                img     = new Image();
             img.onload = function () {
                 that.imgLoadCount++;
-                if (that.imgLoadCount === map.tilesets.length) { that.fullyLoaded = true; }
+                if (that.imgLoadCount === mdata.tilesets.length) { that.fullyLoaded = true; }
             };
-            img.src = map.tilesets[i].image;
-            
+            img.src = tsdata.image;
             var ts = {
-                "firstgid": that.currMapData.tilesets[i].firstgid,
-                "image": img,
-                "imageheight": that.currMapData.tilesets[i].imageheight,
-                "imagewidth": that.currMapData.tilesets[i].imagewidth,
-                "name": that.currMapData.tilesets[i].name,
-
-                // Calculate from the width and height of the overall image and the size of each individual tile.
-                "numXTiles": Math.floor(that.currMapData.tilesets[i].imagewidth / that.tileSize.x),
-                "numYTiles": Math.floor(that.currMapData.tilesets[i].imageheight / that.tileSize.y)
-            };
+                    "firstgid":     tsdata.firstgid,
+                    "image":        img,
+                    "imageheight":  tsdata.imageheight,
+                    "imagewidth":   tsdata.imagewidth,
+                    "name":         tsdata.name,
+                    "numXTiles":    Math.floor(tsdata.imagewidth / that.tileSize.x),
+                    "numYTiles":    Math.floor(tsdata.imageheight / that.tileSize.y)
+                };
             that.tilesets.push(ts);
         }
     
