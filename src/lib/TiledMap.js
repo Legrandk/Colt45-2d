@@ -1,3 +1,9 @@
+/**
+ * To-do:
+ * Review the updated lib/udacity/Map.js class
+ * Include canvas tiling!
+ */
+
 var TiledMap = Class.extend({
 
     currMapData: null,              // full parsed json
